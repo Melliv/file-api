@@ -1,0 +1,177 @@
+openapi: 3.0.0
+info:
+  version: '1.0.0'
+  title: File API
+
+components:
+  schemas:
+    ResponseEntity:
+      type: object
+      properties:
+        data:
+          type: object
+        errors:
+          type: object
+        status:
+          type: integer
+    FileMeta:
+      type: object
+      properties:
+        token:
+          type: string
+        filename:
+          type: string
+        size:
+          type: integer
+        contentType:
+          type: string
+        createTime:
+          type: string
+        meta:
+          type: object
+    FileMetaReq:
+      type: object
+      properties:
+        tokens:
+          type: array
+          items:
+            type: string
+    File:
+      type: object
+      properties:
+        token:
+          type: string
+        name:
+          type: string
+          required: true
+        contentType:
+          type: string
+          required: true
+        meta:
+          type: object
+        source:
+          type: object
+        expireTime:
+          type: string
+        createTime:
+          type: string
+        content:
+          type: string
+          required: true
+
+
+paths:
+  /status:
+    get:
+      summary: Status
+      description: Get status.
+      responses:
+        '200':
+          description: It's a response.
+  /file/{token}:
+    get:
+      parameters:
+        - name: token
+          in: path
+          required: true
+      summary: File
+      description: Get file.
+      responses:
+        '200':
+          description: File to be returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/File"
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                  status:
+                    type: integer
+    delete:
+      parameters:
+        - name: token
+          in: path
+          required: true
+      summary: File
+      description: Delete file.
+      responses:
+        '200':
+          description: Status to be returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                  status:
+                    type: integer
+
+  /files:
+    post:
+      summary: File
+      description: Create file.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/File"
+      responses:
+        '201':
+          description: File to be returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                  status:
+                    type: integer
+
+  /file/metas:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FileMetaReq"
+      summary: File Metas
+      description: Get file metas.
+      responses:
+        '200':
+          description: File to be returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/FileMeta"
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                  status:
+                    type: integer
+
+security:
+  - basicAuth: []
